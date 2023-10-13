@@ -1,3 +1,4 @@
+import 'package:auction_mobile/features/auction/domain/repositories/auction_repository.dart';
 import 'package:auction_mobile/features/auth/domain/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,17 +11,22 @@ import '../navigation/app_router.dart';
 import 'blocs/app/app_bloc.dart';
 
 class App extends StatelessWidget {
-  const App({required AuthRepository authRepository, required AuthUser authUser, super.key})
+  const App({required AuthRepository authRepository, required AuctionRepository auctionRepository, required AuthUser authUser, super.key})
       : _authRepository = authRepository,
+        _auctionRepository = auctionRepository,
         _authUser = authUser;
 
   final AuthRepository _authRepository;
   final AuthUser _authUser;
+  final AuctionRepository _auctionRepository;
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
-        providers: [RepositoryProvider.value(value: _authRepository)],
+        providers: [
+          RepositoryProvider.value(value: _authRepository),
+          RepositoryProvider.value(value: _auctionRepository),  
+        ],
         child: MultiBlocProvider(
           providers: [
             BlocProvider(

@@ -122,6 +122,8 @@ class _SignUpViewState extends State<SignUpView> {
                   onPressed: () => context.goNamed('sign-in'),
                   child: const Text('Go to Sign In'),
                 ),
+                SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
+                TextButton(onPressed: () { context.goNamed('auctions'); }, child: Text('Auctions')),
               ],
             ),
           );

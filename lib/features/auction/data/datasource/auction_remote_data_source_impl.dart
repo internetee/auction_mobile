@@ -1,12 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:auction_mobile/features/auction/data/datasource/auction_remote_data_source.dart';
 import 'package:auction_mobile/features/auction/data/models/auction_model.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuctionRemoteDataSourceImpl implements AuctionRemoteDataSource {
-  final String _baseUrl = "#";
+  final String _baseUrl = dotenv.env['DEVELOPMENT_BASE_URL'] ?? 'http://localhost:3000';
   final http.Client _client;
 
   AuctionRemoteDataSourceImpl(this._client);
@@ -19,20 +21,27 @@ class AuctionRemoteDataSourceImpl implements AuctionRemoteDataSource {
 
   @override
   Future<List<AuctionModel>> getAuctions() async {
-    final url = Uri.parse('$_baseUrl/auctions');
-    final response = await _client.get(url, headers: {'Content-Type': 'application/json'});
+    try {
+      final url = Uri.parse('$_baseUrl/auctions?format=json');
+      final response = await _client.get(url, headers: {'Content-Type': 'application/json'});
 
-    if (response.statusCode == 200) {
-      final responseBody = json.decode(response.body);
-      List<AuctionModel> auctions = [];
+      print(response);
 
-      for (var auction in responseBody['auctions']) {
-        auctions.add(AuctionModel.fromJson(auction));
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        List<AuctionModel> auctions = [];
+
+        for (var auction in responseBody) {
+          auctions.add(AuctionModel.fromJson(auction));
+        }
+
+        return auctions;
+      } else {
+        return Future.error(Exception('Failed to load interests data'));
       }
-
-      return auctions;
-    } else {
-      return Future.error(Exception('Failed to load interests data'));
+    } catch (error) {
+      print('Error occurred: $error');
+      return Future.error(Exception(error));
     }
   }
 }

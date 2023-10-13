@@ -47,8 +47,10 @@ class SignInCubit extends Cubit<SignInState> {
   }
 
   Future<void> signIn() async {
-    if (!(state.emailStatus == EmailStatus.valid) ||
-        !(state.passwordStatus == PasswordStatus.valid)) {
+    print(state.emailStatus);
+    print(state.passwordStatus);
+
+    if (!(state.emailStatus == EmailStatus.valid) || !(state.passwordStatus == PasswordStatus.valid)) {
       emit(state.copyWith(formStatus: FormStatus.invalid));
       emit(state.copyWith(formStatus: FormStatus.initial));
       return;
@@ -64,6 +66,9 @@ class SignInCubit extends Cubit<SignInState> {
       );
       emit(state.copyWith(formStatus: FormStatus.submissionSuccess));
     } catch (err) {
+      print('any error?');
+      print(err);
+      print('----');
       emit(state.copyWith(formStatus: FormStatus.submissionFailure));
     }
   }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auction_mobile/features/auction/presentation/screens/auction_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -19,11 +20,7 @@ class AppRouter {
         path: '/',
         pageBuilder: (context, state) => CustomTransitionPage<void>(
           key: state.pageKey,
-          child: Scaffold(
-            appBar: AppBar(
-              title: const Text('Auctions'),
-            ),
-          ),
+          child: const AuctionScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
         ),
       ),
@@ -46,28 +43,30 @@ class AppRouter {
         ),
       ),
     ],
-    redirect: (BuildContext context, GoRouterState state) {
-      final bool isAuthenticated = appBloc.state.status == AppStatus.authenticated;
-      final bool isSignIn = state.matchedLocation == '/sign-in';
-      final bool isSignUp = state.matchedLocation == '/sign-up';
 
-      // If user is not authenticated, redirect to the sign-in or sign-up page
-      if (!isAuthenticated) {
-        return isSignUp ? '/sign-up' : '/sign-in';
-      }
+    // redirect: (BuildContext context, GoRouterState state) {
+    //   final bool isAuthenticated = appBloc.state.status == AppStatus.authenticated;
+    //   final bool isSignIn = state.matchedLocation == '/sign-in';
+    //   final bool isSignUp = state.matchedLocation == '/sign-up';
 
-      // If user is authenticated and tries to access the sign-in page, redirect to home
-      if (isAuthenticated && isSignIn) {
-        return '/';
-      }
-      // If user is authenticated and tries to access the sign-up page, redirect to home
-      if (isAuthenticated && isSignUp) {
-        return '/';
-      }
+    //   // If user is not authenticated, redirect to the sign-in or sign-up page
+    //   if (!isAuthenticated) {
+    //     return isSignUp ? '/sign-up' : '/sign-in';
+    //   }
 
-      // In all other cases, no redirection is needed
-      return null;
-    },
+    //   // If user is authenticated and tries to access the sign-in page, redirect to home
+    //   if (isAuthenticated && isSignIn) {
+    //     return '/';
+    //   }
+    //   // If user is authenticated and tries to access the sign-up page, redirect to home
+    //   if (isAuthenticated && isSignUp) {
+    //     return '/';
+    //   }
+
+    //   // In all other cases, no redirection is needed
+    //   return null;
+    // },
+
     refreshListenable: GoRouterRefreshStream(appBloc.stream),
   );
 }
