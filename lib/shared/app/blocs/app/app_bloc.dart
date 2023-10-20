@@ -20,12 +20,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     required StreamAuthUserUseCase streamAuthUserUseCase,
     required SignOutUseCase signOutUseCase,
     required AuthUser authUser,
-  })  : _streamAuthUserUseCase = streamAuthUserUseCase,
-        _signOutUseCase = signOutUseCase,
-        super(
-          authUser == AuthUser.empty
-              ? const AppState.unauthenticated()
-              : AppState.authenticated(authUser),
+  })  : _streamAuthUserUseCase = streamAuthUserUseCase, _signOutUseCase = signOutUseCase,
+        super(authUser == AuthUser.empty ? const AppState.unauthenticated() : AppState.authenticated(authUser),
         ) {
     on<AppUserChanged>(_onUserChanged);
     on<AppSignOutRequested>(_onSignOutRequested);

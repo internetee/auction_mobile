@@ -43,6 +43,8 @@ class AuctionView extends StatelessWidget {
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
                     TextButton(onPressed: () { context.goNamed('sign-up'); }, child: Text('Sign Up')),
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
+                    TextButton(onPressed: () { context.goNamed('offers'); }, child: Text('Offers')),
+                    SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
                     Expanded(
                       child: ListView.builder(
                         shrinkWrap: true,
