@@ -60,6 +60,7 @@ class _SignInViewState extends State<SignInView> {
                 ),
               );
           }
+
           if (state.formStatus == FormStatus.submissionFailure) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
@@ -70,6 +71,10 @@ class _SignInViewState extends State<SignInView> {
                   ),
                 ),
               );
+          }
+
+          if (state.formStatus == FormStatus.submissionSuccess) {
+            context.goNamed('auctions');
           }
         },
         builder: (context, state) {

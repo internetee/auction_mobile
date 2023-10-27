@@ -47,28 +47,29 @@ class SignInCubit extends Cubit<SignInState> {
   }
 
   Future<void> signIn() async {
-    print(state.emailStatus);
-    print(state.passwordStatus);
-
     if (!(state.emailStatus == EmailStatus.valid) || !(state.passwordStatus == PasswordStatus.valid)) {
       emit(state.copyWith(formStatus: FormStatus.invalid));
       emit(state.copyWith(formStatus: FormStatus.initial));
+
       return;
     }
 
     emit(state.copyWith(formStatus: FormStatus.submissionInProgress));
     try {
-      await _signInUseCase(
+      final userAuth = await _signInUseCase(
         SignInParams(
           email: state.email!,
           password: state.password!,
         ),
       );
+
+      print("OSOSOSO");
+      print(userAuth);
+      print(state);
+      print("OSOSOSO");
+
       emit(state.copyWith(formStatus: FormStatus.submissionSuccess));
     } catch (err) {
-      print('any error?');
-      print(err);
-      print('----');
       emit(state.copyWith(formStatus: FormStatus.submissionFailure));
     }
   }

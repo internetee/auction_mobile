@@ -61,10 +61,13 @@ class AppRouter {
   );
 
   String? _authHandler(BuildContext context, GoRouterState state) {
-    print('CHE Z?');
     final bool isAuthenticated = appBloc.state.status == AppStatus.authenticated;
     final bool isSignIn = state.matchedLocation == '/sign-in';
     final bool isSignUp = state.matchedLocation == '/sign-up';
+
+    print("AHHHUUUU");
+    print(appBloc.state.authUser);
+    print("AHHHUUUU");
 
     // If user is not authenticated, redirect to the sign-in or sign-up page
     if (!isAuthenticated) {

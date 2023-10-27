@@ -24,7 +24,7 @@ class AuthUserModel extends Equatable {
     return AuthUserModel(
       uuid: json['uuid'] as String,
       email: json['email'] as String,
-      givenName: json['given_name'] as String,
+      givenName: json['given_names'] as String,
       surname: json['surname'] as String,
       mobilePhone: json['mobile_phone'] as String?,
       locale: json['locale'] as String?,

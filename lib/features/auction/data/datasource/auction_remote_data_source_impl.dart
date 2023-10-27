@@ -25,8 +25,6 @@ class AuctionRemoteDataSourceImpl implements AuctionRemoteDataSource {
       final url = Uri.parse('$_baseUrl/auctions?format=json');
       final response = await _client.get(url, headers: {'Content-Type': 'application/json'});
 
-      print(response);
-
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
         List<AuctionModel> auctions = [];

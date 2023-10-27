@@ -16,8 +16,6 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Stream<AuthUser> get authUser {
     return remoteDataSource.user.map((authUserModel) {
-      print('authUserModel: $authUserModel');
-
       if (authUserModel != null) {
         localDataSource.write(key: 'user', value: authUserModel);
       } else {

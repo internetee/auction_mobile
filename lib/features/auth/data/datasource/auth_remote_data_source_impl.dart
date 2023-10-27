@@ -31,13 +31,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (response.statusCode == 200 || response.statusCode == 201) {
       final responseBody = json.decode(response.body);
 
-      print(responseBody);
-
       final authUser = AuthUserModel.fromJson(responseBody);
       final token = response.headers['authorization'];
       authUser.tempTokenStore = token ?? '';
-
-      print('authUser: ${authUser.tempTokenStore}');
 
       localDataSource.write(key: 'user', value: authUser);
 

@@ -51,10 +51,6 @@ void main() {
       offerRemoteDataSource: offerRemoteDataSource,
     );
 
-    print('??????@@@');
-    print(await authRepository.authUser.first);
-    print('??????@@@');
-
     return App(
       auctionRepository: auctionRepository,
       authRepository: authRepository,

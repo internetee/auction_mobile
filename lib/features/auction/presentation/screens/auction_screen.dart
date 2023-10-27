@@ -1,6 +1,7 @@
 import 'package:auction_mobile/features/auction/domain/repositories/auction_repository.dart';
 import 'package:auction_mobile/features/auction/domain/use_cases/get_auctions_use_case.dart';
 import 'package:auction_mobile/features/auction/presentation/blocs/auction/auction_bloc.dart';
+import 'package:auction_mobile/shared/app/blocs/app/app_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +19,14 @@ class AuctionScreen extends StatelessWidget {
 
 class AuctionView extends StatelessWidget {
   const AuctionView({super.key});
+
+  bool _isSignedIn(BuildContext context) {
+    // print('-----');
+    // print(context.read<AppBloc>().state.authUser);
+    // print('-----');
+
+    return context.read<AppBloc>().state.authUser.isEmpty;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +47,19 @@ class AuctionView extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
+                    _isSignedIn(context) ? signInButton(context) : Container(),
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
-                    TextButton(onPressed: () { context.goNamed('sign-in'); }, child: Text('Sign In')),
+                    TextButton(
+                        onPressed: () {
+                          context.goNamed('sign-up');
+                        },
+                        child: Text('Sign Up')),
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
-                    TextButton(onPressed: () { context.goNamed('sign-up'); }, child: Text('Sign Up')),
-                    SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
-                    TextButton(onPressed: () { context.goNamed('offers'); }, child: Text('Offers')),
+                    TextButton(
+                        onPressed: () {
+                          context.goNamed('offers');
+                        },
+                        child: Text('Offers')),
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
                     Expanded(
                       child: ListView.builder(
@@ -68,5 +84,18 @@ class AuctionView extends StatelessWidget {
             ));
           },
         ));
+  }
+
+  Widget signInButton(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
+        TextButton(
+            onPressed: () {
+              context.goNamed('sign-in');
+            },
+            child: Text('Sign In')),
+      ],
+    );
   }
 }

@@ -8,10 +8,6 @@ class StreamAuthUserUseCase {
 
   Stream<AuthUser> call() {
     try {
-      print('----');
-      print(authRepository.authUser);
-      print('----');
-      
       return authRepository.authUser;
     } catch (e) {
       throw Exception(e);
