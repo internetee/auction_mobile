@@ -1,7 +1,7 @@
+import 'package:auction_mobile/configs/locator_service.dart';
 import 'package:auction_mobile/features/auction/domain/repositories/auction_repository.dart';
 import 'package:auction_mobile/features/auction/domain/use_cases/get_auctions_use_case.dart';
 import 'package:auction_mobile/features/auction/presentation/blocs/auction/auction_bloc.dart';
-import 'package:auction_mobile/shared/app/blocs/app/app_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,8 +11,9 @@ class AuctionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (context) => AuctionBloc(getAuctionUseCse: GetAuctionUseCse(auctionRepository: context.read<AuctionRepository>()))..add(GetAuctionsEvent()),
+    return BlocProvider<AuctionBloc>(
+        // create: (context) => AuctionBloc(getAuctionUseCse: GetAuctionUseCse(auctionRepository: context.read<AuctionRepository>()))..add(GetAuctionsEvent()),
+        create: (context) => sl<AuctionBloc>()..add(GetAuctionsEvent()),
         child: const AuctionView());
   }
 }
@@ -25,7 +26,7 @@ class AuctionView extends StatelessWidget {
     // print(context.read<AppBloc>().state.authUser);
     // print('-----');
 
-    return context.read<AppBloc>().state.authUser.isEmpty;
+    return false;
   }
 
   @override
@@ -47,7 +48,8 @@ class AuctionView extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    _isSignedIn(context) ? signInButton(context) : Container(),
+                    // _isSignedIn(context) ? signInButton(context) : Container(),
+                    signInButton(context),
                     SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
                     TextButton(
                         onPressed: () {

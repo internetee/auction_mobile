@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-import '../../domain/entities/auth_user.dart';
+import '../../domain/entities/user.dart';
 
-class AuthUserModel extends Equatable {
+class UserModel extends Equatable {
   final String uuid;
   final String email;
   final String givenName;
@@ -12,7 +12,7 @@ class AuthUserModel extends Equatable {
 
   String? tempTokenStore;
 
-  AuthUserModel({
+  UserModel({
     required this.uuid,
     required this.email,
     required this.givenName,
@@ -20,11 +20,11 @@ class AuthUserModel extends Equatable {
     this.mobilePhone, this.locale, this.tempTokenStore,
   });
 
-  factory AuthUserModel.fromJson(Map<String, dynamic> json) {
-    return AuthUserModel(
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
       uuid: json['uuid'] as String,
       email: json['email'] as String,
-      givenName: json['given_names'] as String,
+      givenName: json['given_name'] as String,
       surname: json['surname'] as String,
       mobilePhone: json['mobile_phone'] as String?,
       locale: json['locale'] as String?,
@@ -42,8 +42,8 @@ class AuthUserModel extends Equatable {
     };
   }
 
-  AuthUser toEntity() {
-    return AuthUser(uuid: uuid, email: email, givenName: givenName, surname: surname, mobilePhone: mobilePhone, locale: locale, tempTokenStore: tempTokenStore);
+  User toEntity() {
+    return User(uuid: uuid, email: email, givenName: givenName, surname: surname, mobilePhone: mobilePhone, locale: locale, tempTokenStore: tempTokenStore);
   }
 
   @override

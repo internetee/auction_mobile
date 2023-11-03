@@ -1,17 +1,12 @@
-import '../entities/auth_user.dart';
+import 'package:auction_mobile/features/auth/data/model/user_model.dart';
+import 'package:auction_mobile/features/auth/domain/entities/user.dart';
+import 'package:fpdart/fpdart.dart';
+
+import '../../../../core/errors/failure.dart';
 
 abstract class AuthRepository {
-  Stream<AuthUser> get authUser;
-
-  Future<AuthUser> signUp({
-    required String email,
-    required String password
-  });
-
-  Future<AuthUser> signIn({
-    required String email,
-    required String password
-  });
-
-  Future<void> signOut();
+  Future<Either<Failure, User>> signInWithEmailAndPassword(String email, String password);
+  Future<Either<Failure, void>> signOut();
+  Future<Either<Failure, UserModel>> getUserDataFromCache();
+  Future<Either<Failure, bool>> saveUserDataToCache(UserModel user);
 }

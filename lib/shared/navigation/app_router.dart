@@ -1,19 +1,19 @@
 import 'dart:async';
 
 import 'package:auction_mobile/features/auction/presentation/screens/auction_screen.dart';
+import 'package:auction_mobile/features/auth/domain/entities/user.dart';
 import 'package:auction_mobile/features/offer/presentation/screens/offers_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/auth/presentation/screens/sign_in_screen.dart';
-import '../../features/auth/presentation/screens/sign_up_screen.dart';
-import '../app/blocs/app/app_bloc.dart';
+import '../../features/auth/presentation/pages/sign_in_screen.dart';
+
 
 class AppRouter {
-  final AppBloc appBloc;
+  final User user;
 
-  AppRouter(this.appBloc);
+  AppRouter({required this.user});
 
   late final GoRouter router = GoRouter(
     routes: <GoRoute>[
@@ -31,59 +31,37 @@ class AppRouter {
         path: '/sign-in',
         pageBuilder: (context, state) => CustomTransitionPage<void>(
           key: state.pageKey,
-          child: const SignInScreen(),
+          child: SignInScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
         ),
       ),
-      GoRoute(
-        name: 'sign-up',
-        path: '/sign-up',
-        pageBuilder: (context, state) => CustomTransitionPage<void>(
-          key: state.pageKey,
-          child: const SignUpScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
-        ),
-      ),
+      // GoRoute(
+      //   name: 'sign-up',
+      //   path: '/sign-up',
+      //   pageBuilder: (context, state) => CustomTransitionPage<void>(
+      //     key: state.pageKey,
+      //     child: const SignUpScreen(),
+      //     transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+      //   ),
+      // ),
       GoRoute(
         name: 'offers',
         path: '/offers',
         pageBuilder: (context, state) => CustomTransitionPage<void>(
           key: state.pageKey,
-          child: OffersScreen(
-            authUser: appBloc.state.authUser,
-          ),
+          child: OffersScreen(user: User.empty),
           transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
         ),
         redirect: _authHandler,
       )
-    ],
-    refreshListenable: GoRouterRefreshStream(appBloc.stream),
+    ]
   );
 
   String? _authHandler(BuildContext context, GoRouterState state) {
-    final bool isAuthenticated = appBloc.state.status == AppStatus.authenticated;
-    final bool isSignIn = state.matchedLocation == '/sign-in';
-    final bool isSignUp = state.matchedLocation == '/sign-up';
-
-    print("AHHHUUUU");
-    print(appBloc.state.authUser);
-    print("AHHHUUUU");
-
-    // If user is not authenticated, redirect to the sign-in or sign-up page
-    if (!isAuthenticated) {
-      return isSignUp ? '/sign-up' : '/sign-in';
+    if (user.tempTokenStore == null) {
+      return '/login';
     }
 
-    // If user is authenticated and tries to access the sign-in page, redirect to home
-    if (isAuthenticated && isSignIn) {
-      return '/';
-    }
-    // If user is authenticated and tries to access the sign-up page, redirect to home
-    if (isAuthenticated && isSignUp) {
-      return '/';
-    }
-
-    // In all other cases, no redirection is needed
     return null;
   }
 }

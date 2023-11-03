@@ -9,14 +9,14 @@ abstract class OfferRemoteDataSource {
 
 class OfferRemoteDataSourceImpl extends OfferRemoteDataSource {
   final String _baseUrl = dotenv.env['DEVELOPMENT_BASE_URL'] ?? 'http://localhost:3000';
-  final http.Client _client;
+  final http.Client client;
 
-  OfferRemoteDataSourceImpl(this._client);
-  
+  OfferRemoteDataSourceImpl({required this.client});
+
   @override
   Future<List<OfferModel>> getOffers(String authToken) async {
     final url = Uri.parse('$_baseUrl/offers');
-    final response = await _client.get(url, headers: _headers(authToken));
+    final response = await client.get(url, headers: _headers(authToken));
 
     if (response.statusCode == 200) {
       final responseBody = json.decode(response.body);
@@ -28,10 +28,6 @@ class OfferRemoteDataSourceImpl extends OfferRemoteDataSource {
   }
 
   Map<String, String>? _headers(String authToken) {
-    return {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $authToken'
-    };
+    return {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer $authToken'};
   }
 }

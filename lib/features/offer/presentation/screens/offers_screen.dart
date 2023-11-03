@@ -1,22 +1,22 @@
-import 'package:auction_mobile/features/auth/domain/entities/auth_user.dart';
-import 'package:auction_mobile/features/offer/domain/entities/offer.dart';
-import 'package:auction_mobile/features/offer/domain/use_cases/get_offers_use_case.dart';
+import 'package:auction_mobile/configs/locator_service.dart';
 import 'package:auction_mobile/features/offer/presentation/blocs/offer/offer_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../auth/domain/entities/user.dart';
 import '../../domain/repositories/offer_repository.dart';
 
 class OffersScreen extends StatelessWidget {
-  final AuthUser authUser;
+  final User user;
 
-  const OffersScreen({required this.authUser, Key? key }) : super(key: key);
+  const OffersScreen({ super.key, required this.user });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<OfferBloc>(
-      create: (context) => OfferBloc(getOffersUseCase: GetOffersUseCase(offerRepository: context.read<OfferRepository>()))..add(GetOffersEvent(authToken: authUser.tempTokenStore ?? '')),
+      // create: (context) => OfferBloc(getOffersUseCase: GetOffersUseCase(offerRepository: context.read<OfferRepository>()))..add(GetOffersEvent(authToken: authUser.tempTokenStore ?? '')),
+      create: (context) => sl<OfferBloc>()..add(GetOffersEvent(authToken: user.tempTokenStore ?? '')),
       child: OffersView(),
     );
   }

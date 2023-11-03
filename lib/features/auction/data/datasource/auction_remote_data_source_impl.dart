@@ -9,9 +9,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuctionRemoteDataSourceImpl implements AuctionRemoteDataSource {
   final String _baseUrl = dotenv.env['DEVELOPMENT_BASE_URL'] ?? 'http://localhost:3000';
-  final http.Client _client;
+  final http.Client client;
 
-  AuctionRemoteDataSourceImpl(this._client);
+  AuctionRemoteDataSourceImpl({required this.client});
 
   Future<Map<String, String>> _setHeader() async {
     String token = 'mock-token';
@@ -23,7 +23,7 @@ class AuctionRemoteDataSourceImpl implements AuctionRemoteDataSource {
   Future<List<AuctionModel>> getAuctions() async {
     try {
       final url = Uri.parse('$_baseUrl/auctions?format=json');
-      final response = await _client.get(url, headers: {'Content-Type': 'application/json'});
+      final response = await client.get(url, headers: {'Content-Type': 'application/json'});
 
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
