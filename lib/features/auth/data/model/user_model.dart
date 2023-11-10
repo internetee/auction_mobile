@@ -5,7 +5,7 @@ import '../../domain/entities/user.dart';
 class UserModel extends Equatable {
   final String uuid;
   final String email;
-  final String givenName;
+  final String givenNames;
   final String surname;
   final String? mobilePhone;
   final String? locale;
@@ -15,7 +15,7 @@ class UserModel extends Equatable {
   UserModel({
     required this.uuid,
     required this.email,
-    required this.givenName,
+    required this.givenNames,
     required this.surname,
     this.mobilePhone, this.locale, this.tempTokenStore,
   });
@@ -24,7 +24,7 @@ class UserModel extends Equatable {
     return UserModel(
       uuid: json['uuid'] as String,
       email: json['email'] as String,
-      givenName: json['given_name'] as String,
+      givenNames: json['given_names'] as String,
       surname: json['surname'] as String,
       mobilePhone: json['mobile_phone'] as String?,
       locale: json['locale'] as String?,
@@ -35,7 +35,7 @@ class UserModel extends Equatable {
     return {
       'uuid': uuid,
       'email': email,
-      'given_name': givenName,
+      'given_names': givenNames,
       'surname': surname,
       'mobile_phone': mobilePhone,
       'locale': locale,
@@ -43,9 +43,9 @@ class UserModel extends Equatable {
   }
 
   User toEntity() {
-    return User(uuid: uuid, email: email, givenName: givenName, surname: surname, mobilePhone: mobilePhone, locale: locale, tempTokenStore: tempTokenStore);
+    return User(uuid: uuid, email: email, givenNames: givenNames, surname: surname, mobilePhone: mobilePhone, locale: locale, tempTokenStore: tempTokenStore);
   }
 
   @override
-  List<Object?> get props => [uuid, email, givenName, surname, mobilePhone, locale, tempTokenStore];
+  List<Object?> get props => [uuid, email, givenNames, surname, mobilePhone, locale, tempTokenStore];
 }

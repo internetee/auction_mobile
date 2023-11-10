@@ -9,6 +9,7 @@ const chachedUser = 'CACHED_USER';
 abstract class AuthLocalDataSource {
   Future<void> cacheUser(UserModel user);
   Future<UserModel> getUser();
+  Future<void> clearUser();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
@@ -25,11 +26,18 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<UserModel> getUser() {
-    final jsonUser = sharedPreferences.getString(chachedUser);
-    final data = jsonDecode(jsonUser!);
-    if (data.isEmpty) {
+    final jsonString = sharedPreferences.getString(chachedUser);
+
+    if (jsonString == null || jsonString.isEmpty) {
       throw CacheException();
     }
-    return Future.value(data);
+
+    final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+    return Future.value(UserModel.fromJson(jsonMap));
+  }
+
+  @override
+  Future<void> clearUser() {
+    return sharedPreferences.remove(chachedUser);
   }
 }

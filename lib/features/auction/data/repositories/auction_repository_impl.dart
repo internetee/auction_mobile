@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:auction_mobile/features/auction/data/datasource/auction_websocket_data_source.dart';
 import 'package:auction_mobile/features/auction/data/models/auction_model.dart';
 import 'package:auction_mobile/features/auction/domain/entities/auction.dart';
 import 'package:auction_mobile/features/auction/domain/repositories/auction_repository.dart';
@@ -7,8 +10,9 @@ import '../datasource/auction_remote_data_source.dart';
 
 class AuctionRepositoryImpl implements AuctionRepository {
   final AuctionRemoteDataSource auctionRemoteDataSource;
+  final AuctionWebsocketDataSource auctionWebsocketDataSource;
 
-  AuctionRepositoryImpl({required this.auctionRemoteDataSource});
+  AuctionRepositoryImpl({required this.auctionRemoteDataSource, required this.auctionWebsocketDataSource});
 
   @override
   Future<Either<Exception, List<Auction>>> getAuctions() async {
@@ -24,5 +28,15 @@ class AuctionRepositoryImpl implements AuctionRepository {
     } catch (e) {
       return Left(Exception(e.toString()));
     }
+  }
+
+  @override
+  Stream<Auction> getAuctionStream() {
+    auctionWebsocketDataSource.connect();
+
+    return auctionWebsocketDataSource.stream.map((data) {
+      var jsonData = json.decode(data);
+      return AuctionModel.fromJson(jsonData).toEntity();
+    }).asBroadcastStream();
   }
 }

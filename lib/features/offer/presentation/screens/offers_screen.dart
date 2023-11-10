@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../auth/domain/entities/user.dart';
-import '../../domain/repositories/offer_repository.dart';
 
 class OffersScreen extends StatelessWidget {
   final User user;

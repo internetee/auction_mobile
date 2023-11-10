@@ -1,3 +1,4 @@
+import 'package:auction_mobile/core/errors/exception.dart';
 import 'package:auction_mobile/core/errors/failure.dart';
 import 'package:auction_mobile/features/auth/data/datasource/auth_local_data_source.dart';
 import 'package:auction_mobile/features/auth/data/datasource/auth_remote_data_source.dart';
@@ -20,27 +21,33 @@ class AuthRepositoryImpl implements AuthRepository {
       saveUserDataToCache(userModel);
 
       return Right(userModel.toEntity());
-    } catch (e) {
-      return Left(e as Failure);
+    } on ServerException catch (e) {
+      print(e);
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, void>> signOut() {
-    // TODO: implement signOut
-    throw UnimplementedError();
+  Future<Either<Failure, void>> signOut() async {
+    try {
+      await authLocalDataSource.clearUser();
+
+      return Future.value(const Right(null));
+    } catch (e) {
+      return Left(CacheFailure(message: e.toString()));
+    }
   }
 
   @override
-Future<Either<Failure, UserModel>> getUserDataFromCache() async {
-  try {
-    UserModel userModel = await authLocalDataSource.getUser();
-    return Right(userModel);
-  } catch (e) {
-    print(e);
-    return Left(CacheFailure(message: e.toString()));
+  Future<Either<Failure, UserModel>> getUserDataFromCache() async {
+    try {
+      UserModel userModel = await authLocalDataSource.getUser();
+
+      return Right(userModel);
+    } catch (e) {
+      return Left(CacheFailure(message: e.toString()));
+    }
   }
-}
 
   @override
   Future<Either<Failure, bool>> saveUserDataToCache(UserModel user) async {
