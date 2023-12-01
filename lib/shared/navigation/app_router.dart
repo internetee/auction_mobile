@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auction_mobile/features/auction/presentation/screens/auction_screen.dart';
 import 'package:auction_mobile/features/auth/domain/entities/user.dart';
 import 'package:auction_mobile/features/offer/presentation/screens/offers_screen.dart';
+import 'package:auction_mobile/shared/screens/tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -18,8 +19,17 @@ class AppRouter {
   late final GoRouter router = GoRouter(
     routes: <GoRoute>[
       GoRoute(
-        name: 'auctions',
+        name: 'tabs',
         path: '/',
+        pageBuilder: (context, state) => CustomTransitionPage<void>(
+          key: state.pageKey,
+          child: const TabsScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+        ),
+      ),
+      GoRoute(
+        name: 'auctions',
+        path: '/auctions',
         pageBuilder: (context, state) => CustomTransitionPage<void>(
           key: state.pageKey,
           child: const AuctionScreen(),

@@ -34,8 +34,17 @@ class AuctionRepositoryImpl implements AuctionRepository {
   Stream<Auction> getAuctionStream() {
     auctionWebsocketDataSource.connect();
 
+    print('-------- ?');
+    print(auctionWebsocketDataSource.stream);
+    print('-------- ?');
+
     return auctionWebsocketDataSource.stream.map((data) {
       var jsonData = json.decode(data);
+
+      print('-------- ?');
+      print(jsonData);
+      print('-------- ?');
+
       return AuctionModel.fromJson(jsonData).toEntity();
     }).asBroadcastStream();
   }

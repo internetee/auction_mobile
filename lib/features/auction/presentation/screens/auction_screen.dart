@@ -1,11 +1,12 @@
 import 'package:auction_mobile/configs/locator_service.dart';
 import 'package:auction_mobile/features/auction/presentation/blocs/auction/auction_bloc.dart';
 import 'package:auction_mobile/features/auction/presentation/blocs/websocket/websocket_cubit.dart';
+import 'package:auction_mobile/features/auction/presentation/widgets/auction_card.dart';
+import 'package:auction_mobile/features/auction/presentation/widgets/hero.dart';
+import 'package:auction_mobile/features/auction/presentation/widgets/inform_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-
-import '../../../auth/presentation/cubit/auth/auth_cubit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class AuctionScreen extends StatelessWidget {
   const AuctionScreen({super.key});
@@ -21,131 +22,95 @@ class AuctionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authCubit = context.read<AuthCubit>();
-    final currentUser = authCubit.state.user;
-
     return Scaffold(
         appBar: AppBar(
           title: const Text('Auctions'),
         ),
-        body: BlocListener<AuthCubit, AuthState>(
-          listener: (context, state) {
-            if (state.status == AuthStatus.authenticated) {
+        body: BlocConsumer<WebsocketCubit, WebsocketState>(
+          listener: (context, websocketState) {
+            if (websocketState is WebsocketDataReceived) {
+              print('WebsocketDataReceived: ${websocketState.data}');
+            }
+            if (websocketState is WebsocketError) {
+              print('WebsocketError: ${websocketState.message}');
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  backgroundColor: Colors.green,
-                  content: Text('Welcome ${state.user.givenNames}', style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black)),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            } else if (state.status == AuthStatus.unauthenticated) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
+                  content: Text(websocketState.message),
                   backgroundColor: Colors.red,
-                  duration: const Duration(seconds: 2),
                 ),
               );
             }
           },
-          child: BlocConsumer<WebsocketCubit, WebsocketState>(
-            listener: (context, websocketState) {
-              if (websocketState is WebsocketDataReceived) {
-                // Обработайте полученные данные
-                // Например, обновите список аукционов или покажите уведомление
+          builder: (context, state) {
+            return BlocBuilder<AuctionBloc, AuctionState>(
+              builder: (context, state) {
+                if (state.status == AuctionStatus.loading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-                print('WebsocketDataReceived: ${websocketState.data}');
-
-              }
-              if (websocketState is WebsocketError) {
-                print('WebsocketError: ${websocketState.message}');
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(websocketState.message),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            },
-            builder: (context, state) {
-              return BlocBuilder<AuctionBloc, AuctionState>(
-                builder: (context, state) {
-                  if (state.status == AuctionStatus.loading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-
-                  if (state.status == AuctionStatus.success) {
-                    return Padding(
+                if (state.status == AuctionStatus.success) {
+                  return SingleChildScrollView(
+                    child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
-                          currentUser.givenNames.isEmpty ? const Text('No User') : Text(currentUser.givenNames),
-                          signInButton(context),
-                          SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
-                          TextButton(
-                            onPressed: () {
-                              context.goNamed('sign-up');
-                            },
-                            child: const Text('Sign Up'),
+                          const AuctionHero(),
+                          const SizedBox(
+                            height: 8,
                           ),
-                          SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
-                          TextButton(
-                            onPressed: () {
-                              // context.goNamed('sign-up');
-
-                              authCubit.signOut();
-                            },
-                            child: const Text('Sign Out'),
+                          const InformCard(
+                            svgPath: 'assets/images/gift.svg',
+                            title: 'Submit an offer',
+                            description:
+                                'to the .ee domain of your choice. Depending on the domain name, the auctions take place either in the style of a blind auction or an open-bid auction',
                           ),
-                          SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
-                          TextButton(
-                            onPressed: () {
-                              context.goNamed('offers');
-                            },
-                            child: const Text('Offers'),
+                          const SizedBox(
+                            height: 8,
                           ),
-                          SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
-                          Expanded(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: state.auctions.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(state.auctions[index].uuid),
-                                  subtitle: Text(state.auctions[index].domainName),
-                                );
-                              },
-                            ),
+                          const InformCard(
+                            svgPath: 'assets/images/timer.svg',
+                            title: 'Wait for an auction to end',
+                            description:
+                                'We will let you know about the result by email. The preferential right to register the domain name will be granted to the highest bidder.',
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const InformCard(
+                            svgPath: 'assets/images/card.svg',
+                            title: 'Pay auction fee',
+                            description:
+                                'Once the fee is paid, you will receive a registration code that you can use at any accredited registrar.',
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: state.auctions.length,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return AuctionCard(
+                                auction: state.auctions[index],
+                              );
+                            },
                           ),
                         ],
                       ),
-                    );
-                  }
+                    ),
+                  );
+                }
 
-                  return Container(
-                      child: Center(
-                    child: Text(state.status.toString()),
-                  ));
-                },
-              );
-            },
-          ),
+                return Container(
+                    child: Center(
+                  child: Text(state.status.toString()),
+                ));
+              },
+            );
+          },
         ));
-  }
-
-  Widget signInButton(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
-        TextButton(
-            onPressed: () {
-              context.goNamed('sign-in');
-            },
-            child: Text('Sign In')),
-      ],
-    );
   }
 }
